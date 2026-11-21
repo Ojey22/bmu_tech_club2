@@ -10,5 +10,5 @@
 
   window.API_BASE_URL = isLocalDevelopment
     ? "http://localhost:5000"
-    : "https://bmu-tech-club-backend.onrender.com";
+    : "https://bmu-tech-club2.onrender.com";
 })();
