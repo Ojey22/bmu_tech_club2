@@ -1,0 +1,27 @@
+[
+  {
+    "id": "diya-dawra",
+    "name": "Diya Dawra",
+    "role": "Club President",
+    "image": "Diya.jpeg",
+    "linkedin": "https://www.linkedin.com/in/diya-dawra-3ab91b3a7/"
+  },
+  {
+    "id": "vipul-mittal",
+    "name": "Vipul Mittal",
+    "role": "Vice President",
+    "image": "Vipul.jpeg"
+  },
+  {
+    "id": "vanshika-gupta",
+    "name": "Vanshika Gupta",
+    "role": "Event Coordinator",
+    "image": "Vanshika.jpeg"
+  },
+  {
+    "id": "ojas-srivastava",
+    "name": "Ojas Srivastava",
+    "role": "Event Coordinator",
+    "image": "Ojas.jpeg"
+  }
+]

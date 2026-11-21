@@ -1,0 +1,385 @@
+{
+  "info": {
+    "_postman_id": "8c6dc35b-2d89-4eea-bf19-ae6f7d9ca0a1",
+    "name": "BMU Tech Club \u2014 Ojas Backend APIs",
+    "description": "Public JSON read endpoints, admin-only JSON create/update endpoints, authenticated My Registrations, and the existing GitHub external API. Configure baseUrl, adminToken and studentToken before running protected requests. POST test records are persistent; remove generated test records from the respective JSON file after the run.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/health",
+        "description": "Confirm that the Express server is responding."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Health endpoint responds successfully', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get all events",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/local-data/events",
+        "description": "Public: returns the events.json dataset."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Events list responds successfully', () => pm.response.to.have.status(200));",
+              "pm.test('Response contains an array', () => pm.expect(pm.response.json().data).to.be.an('array'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get event by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/local-data/events/web-development-workshop",
+        "description": "Public: fetch one of the existing event records."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Event lookup responds successfully', () => pm.response.to.have.status(200));",
+              "pm.test('Correct event is returned', () => pm.expect(pm.response.json().data.id).to.eql('web-development-workshop'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create event (admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/local-data/events",
+        "description": "Admin only. Creates a test event in events.json. Use a unique ID; this record is persistent.",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{eventId}}\",\n  \"title\": \"Postman API Test Event\",\n  \"date\": \"2026-12-10\",\n  \"displayDate\": \"10 December\",\n  \"time\": \"2:00 PM - 4:00 PM\",\n  \"venue\": \"Test Venue\",\n  \"description\": \"Temporary test record; remove from events.json after testing.\",\n  \"category\": \"Test\",\n  \"registrationPage\": \"web-development-register.html\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('eventId', 'postman-test-event-' + Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Event is created', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "if (body.data && body.data.id) pm.collectionVariables.set('eventId', body.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update event (admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/local-data/events/{{eventId}}",
+        "description": "Admin only. Updates the event created in the previous request.",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated by Postman API test.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Event is updated', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get all team members",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/local-data/team",
+        "description": "Public: returns the team.json dataset."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Team list responds successfully', () => pm.response.to.have.status(200));",
+              "pm.test('Team response contains four members', () => pm.expect(pm.response.json().data.length).to.eql(4));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get team member by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/local-data/team/ojas-srivastava",
+        "description": "Public: fetch a team member by ID."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Team member lookup responds successfully', () => pm.response.to.have.status(200));",
+              "pm.test('Correct team member is returned', () => pm.expect(pm.response.json().data.name).to.eql('Ojas Srivastava'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create team member (admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/local-data/team",
+        "description": "Admin only. Creates a test member in team.json; this record is persistent.",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{memberId}}\",\n  \"name\": \"Postman Test Member\",\n  \"role\": \"Temporary Test Role\",\n  \"description\": \"Temporary test record; remove from team.json after testing.\",\n  \"image\": \"Ojas.jpeg\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('memberId', 'postman-test-member-' + Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Team member is created', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "if (body.data && body.data.id) pm.collectionVariables.set('memberId', body.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update team member (admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/local-data/team/{{memberId}}",
+        "description": "Admin only. Updates the team member created in the previous request.",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated by Postman API test.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Team member is updated', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "My registrations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/registrations/my",
+        "description": "Protected: returns only the current student's registrations, with eventDetails when a matching event exists.",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{studentToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('My registrations responds successfully', () => pm.response.to.have.status(200));",
+              "pm.test('Response data is an array', () => pm.expect(pm.response.json().data).to.be.an('array'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GitHub repository stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/external/github-stats",
+        "description": "Existing optional external API integration."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('GitHub stats endpoint responds', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "adminToken",
+      "value": "PASTE_ADMIN_JWT_HERE"
+    },
+    {
+      "key": "studentToken",
+      "value": "PASTE_STUDENT_JWT_HERE"
+    },
+    {
+      "key": "eventId",
+      "value": "postman-test-event-change-me"
+    },
+    {
+      "key": "memberId",
+      "value": "postman-test-member-change-me"
+    }
+  ]
+}

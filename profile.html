@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | BMU Tech Club</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .profile-page {
+            min-height: 100vh;
+            padding: 120px 20px 60px;
+            background: #090611;
+            color: white;
+        }
+
+        .profile-card {
+            max-width: 700px;
+            margin: auto;
+            padding: 35px;
+            background: linear-gradient(145deg, #1c1030, #100a1c);
+            border: 1px solid rgba(168,85,247,.35);
+            border-radius: 18px;
+        }
+
+        .profile-card h1 {
+            color: #d8b4fe;
+            margin-bottom: 10px;
+        }
+
+        .profile-subtitle {
+            color: #cfc4db;
+            margin-bottom: 30px;
+        }
+
+        .profile-field {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(168,85,247,.2);
+        }
+
+        .profile-field label {
+            display: block;
+            color: #c084fc;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .profile-field p {
+            color: white;
+            font-size: 15px;
+        }
+
+        .profile-back {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #c084fc;
+            text-decoration: none;
+        }
+
+        #profileMessage {
+            color: #d8b4fe;
+            margin-top: 20px;
+        }
+
+        @media(max-width:600px) {
+            .profile-card {
+                padding: 22px;
+            }
+        }
+.profile-edit-btn,
+#editProfileForm button {
+    background: #9333ea;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px 5px 10px 0;
+}
+
+#editProfileForm {
+    margin: 20px 0;
+    padding: 20px;
+    background: #160d25;
+    border: 1px solid #6b21a8;
+    border-radius: 12px;
+}
+
+#editProfileForm label {
+    display: block;
+    margin: 12px 0 6px;
+    color: #d8b4fe;
+}
+
+#editProfileForm input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 7px;
+    border: 1px solid #6b21a8;
+    background: #090611;
+    color: white;
+    box-sizing: border-box;
+}
+
+    </style>
+    <script src="api-config.js"></script>
+</head>
+
+<body>
+
+    <header class="header">
+    <nav class="navbar">
+
+        <div class="brand">
+            <img src="bml_logo2.png" alt="BMU Tech Club Logo" class="bmu-logo">
+            <div class="brand-text">
+                <h1>BMU Tech Club</h1>
+                <p>BML Munjal University</p>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#activities">Activities</a></li>
+            <li><a href="index.html#events">Events</a></li>
+            <li><a href="index.html#team">Team</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+
+        <div class="header-buttons">
+
+            <div id="visitorNav" class="visitor-nav">
+                <a href="signin.html" class="signin-btn">Sign In</a>
+                <a href="register.html" class="join-btn">Join Us</a>
+            </div>
+
+            <div id="studentNav" class="student-nav" hidden>
+
+                <div class="notification-dropdown">
+                    <button type="button" id="notificationsBtn" class="notifications-btn" aria-label="Open notifications" aria-expanded="false">
+                        <span class="notification-bell">🔔</span>
+                        <span id="notificationBadge" class="notification-badge" hidden>0</span>
+                    </button>
+
+                    <div id="notificationsMenu" class="notifications-menu" hidden>
+                        <div class="notifications-header">
+                            <h3>Notifications</h3>
+                            <button type="button" id="markAllReadBtn">Mark all as read</button>
+                        </div>
+                        <div id="notificationsList" class="notifications-list"></div>
+                        <div class="notifications-footer">
+                            <a href="notifications.html">View all notifications</a>
+                        </div>
+                    </div>
+                </div>
+
+                <span id="welcomeStudent">Hi, Student</span>
+
+                <div class="profile-dropdown">
+                    <button type="button" id="profileDropdownBtn" class="profile-dropdown-btn" aria-label="Open profile menu" aria-expanded="false">
+                        <span class="profile-avatar">
+                            <span id="profileInitial">S</span>
+                        </span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+
+                    <div id="profileDropdownMenu" class="profile-dropdown-menu" hidden>
+                        <a href="profile.html">My Profile</a>
+                        <a href="my-registrations.html">My Registrations</a>
+                        <button type="button" id="logoutBtn">Logout</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </nav>
+</header>
+
+<main class="profile-page">
+    <div class="profile-card">
+
+     
+
+        <h1>My Profile</h1>
+        <p class="profile-subtitle">
+            View your BMU Tech Club account details.
+        </p>
+
+<button id="editProfileBtn" class="profile-edit-btn">
+    Edit Profile
+</button>
+
+<form id="editProfileForm" style="display:none;">
+
+    <h2>Edit Your Details</h2>
+
+    <label>Full Name</label>
+    <input type="text" id="editFullName" required>
+
+    <label>Phone Number</label>
+    <input type="tel" id="editPhoneNumber" required>
+
+    <label>Course</label>
+    <input type="text" id="editCourse" required>
+
+    <label>Year</label>
+    <input type="number" id="editYear" min="1" max="5" required>
+
+    <label>Interests</label>
+    <input type="text" id="editInterest">
+
+    <button type="submit">Save Changes</button>
+    <button type="button" id="cancelEditBtn">Cancel</button>
+
+</form>
+
+        <div id="profileDetails">
+            Loading your profile...
+        </div>
+
+        <p id="profileMessage"></p>
+
+    </div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const token = localStorage.getItem("authToken");
+    const details = document.getElementById("profileDetails");
+    const message = document.getElementById("profileMessage");
+
+    if (!token) {
+        window.location.href = "signin.html";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${window.API_BASE_URL || "https://bmu-tech-club-backend.onrender.com"}/api/auth/profile`,
+            {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (response.status === 401) {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("currentUser");
+            window.location.href = "signin.html";
+            return;
+        }
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to load profile.");
+        }
+
+        const user = result.data;
+
+        const fields = [
+            ["Full Name", user.fullName],
+            ["Enrollment Number", user.enrollmentNumber],
+            ["Email Address", user.email],
+            ["Phone Number", user.phoneNumber],
+            ["Course", user.course],
+            ["Year", user.year],
+            ["Interests", user.interest || "Not provided"]
+        ];
+
+        details.innerHTML = fields.map(([label, value]) => `
+            <div class="profile-field">
+                <label>${label}</label>
+                <p></p>
+            </div>
+        `).join("");
+
+        details.querySelectorAll(".profile-field p").forEach((element, index) => {
+            element.textContent = fields[index][1] || "Not provided";
+        });
+
+// Edit Profile functionality
+const editBtn = document.getElementById("editProfileBtn");
+const editForm = document.getElementById("editProfileForm");
+const cancelBtn = document.getElementById("cancelEditBtn");
+
+editBtn.addEventListener("click", function () {
+    document.getElementById("editFullName").value = user.fullName || "";
+    document.getElementById("editPhoneNumber").value = user.phoneNumber || "";
+    document.getElementById("editCourse").value = user.course || "";
+    document.getElementById("editYear").value = user.year || "";
+    document.getElementById("editInterest").value = user.interest || "";
+
+    editForm.style.display = "block";
+    editBtn.style.display = "none";
+});
+
+cancelBtn.addEventListener("click", function () {
+    editForm.style.display = "none";
+    editBtn.style.display = "inline-block";
+});
+
+editForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+});
+    } catch (error) {
+        console.error(error);
+        message.textContent = error.message;
+    }
+
+});
+</script>
+
+<script src="script.js"></script>
+<script src="auth-ui.js"></script>
+<script src="notifications.js"></script>
+    
+</body>
+</html>
